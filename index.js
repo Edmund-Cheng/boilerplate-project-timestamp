@@ -53,13 +53,13 @@ function validateDate(input) {
 // your first API endpoint... 
 app.get("/api/:dateOrTimestamp", function (req, res, next) {
   if (validateTimestamp(req.params.dateOrTimestamp)) {
-    req.unix = req.params.dateOrTimestamp;
-    req.utc = new Date(req.params.dateOrTimestamp);
+    req.unix = parseInt(req.params.dateOrTimestamp);
+    req.utc = new Date(req.unix).toUTCString;
     req.invalidDate = false;
   } else if (validateDate(req.params.dateOrTimestamp)) {
     var newDate = new Date(req.params.dateOrTimestamp);
     req.unix = newDate.getTime();
-    req.utc = newDate.toString();
+    req.utc = newDate.toUTCString();
     req.invalidDate = false;
   } else {
     req.invalidDate = true;
@@ -69,7 +69,7 @@ app.get("/api/:dateOrTimestamp", function (req, res, next) {
     if (req.invalidDate) {
       res.json({error: "Invalid Date"});
     } else {
-      res.json({unix: parseInt(req.unix), utc: req.utc});  
+      res.json({unix: req.unix, utc: req.utc});  
     }    
 });
 
@@ -78,7 +78,7 @@ app.get("/api", function (req, res){
   var newDate = new Date();
   newUnix = newDate.getTime();
   newUtc = newDate.toUTCString();
-  res.json({unix: parseInt(newUnix), utc: newUtc})
+  res.json({unix: newUnix, utc: newUtc})
 });
 
 // listen for requests :)
