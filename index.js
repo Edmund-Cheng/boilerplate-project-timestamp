@@ -67,7 +67,7 @@ app.get("/api/:dateOrTimestamp", function (req, res, next) {
       req.invalidDate = true;
     } else {
       req.unix = date.getTime();
-      req.utc = newDate.toUTCString();
+      req.utc = date.toUTCString();
       req.invalidDate = false;
     }
   };
