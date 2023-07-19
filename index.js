@@ -71,7 +71,6 @@ app.get("/api/:dateOrTimestamp", function (req, res, next) {
       req.invalidDate = false;
     }
   };
-  console.log(req.params.dateOrTimestamp);
   next();
 }, function(req, res) {
     if (req.invalidDate) {
