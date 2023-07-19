@@ -73,6 +73,13 @@ app.get("/api/:dateOrTimestamp", function (req, res, next) {
     }    
 });
 
+// handle empty input for /api
+app.get("/api", function (req, res){
+  var newDate = new Date();
+  newUnix = newDate.getTime();
+  newUtc = newDate.toUTCString();
+  res.json({unix: newUnix, utc: newUtc})
+});
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
