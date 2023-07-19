@@ -69,7 +69,7 @@ app.get("/api/:dateOrTimestamp", function (req, res, next) {
     if (req.invalidDate) {
       res.json({error: "Invalid Date"});
     } else {
-      res.json({unix: req.unix, utc: req.utc});  
+      res.json({unix: parseInt(req.unix), utc: req.utc});  
     }    
 });
 
@@ -78,7 +78,7 @@ app.get("/api", function (req, res){
   var newDate = new Date();
   newUnix = newDate.getTime();
   newUtc = newDate.toUTCString();
-  res.json({unix: newUnix, utc: newUtc})
+  res.json({unix: parseInt(newUnix), utc: newUtc})
 });
 
 // listen for requests :)
