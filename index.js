@@ -18,12 +18,60 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
+// check timestamp is a valid number
+function validateTimestamp(input) {
+  const unixTimestampPattern = /^\d+$/;
+  if (unixTimestampPattern.test(input)) {
+    // Unix timestamp detected, convert it to a Date object
+    const timestamp = parseInt(input);
+    const date = new Date(timestamp);
+    if (!isNaN(date.getTime())) {
+      // Valid Unix timestamp
+      return true;
+    }
+  }
+  // Invalid input
+  return false;
+};
+
+// check date is a valid YYYY-MM-DD , where MM and DD could be single or double digit, start by zero
+function validateDate(input) {
+  // Check if the input matches the date format (YYYY-MM-DD)
+  const dateFormatPattern = /^\d{4}-(0\d|1[0-2])-([0-2]\d|3[01])$/;
+  if (dateFormatPattern.test(input)) {
+    // Date format detected, parse it using Date object
+    const date = new Date(input);
+    if (!isNaN(date.getTime())) {
+      // Valid date format
+      return true;
+    }
+  }
+  // Invalid input
+  return false;
+};
 
 // your first API endpoint... 
-app.get("/api/hello", function (req, res) {
-  res.json({greeting: 'hello API'});
+app.get("/api/:dateOrTimestamp", function (req, res, next) {
+  if (validateTimestamp(req.params.dateOrTimestamp)) {
+    req.unix = req.params.dateOrTimestamp;
+    req.utc = new Date(req.params.dateOrTimestamp);
+    req.invalidDate = false;
+  } else if (validateDate(req.params.dateOrTimestamp)) {
+    var newDate = new Date(req.params.dateOrTimestamp);
+    req.unix = newDate.getTime();
+    req.utc = newDate.toString();
+    req.invalidDate = false;
+  } else {
+    req.invalidDate = true;
+  };
+  next();
+}, function(req, res) {
+    if (req.invalidDate) {
+      res.json({error: "Invalid Date"});
+    } else {
+      res.json({unix: req.unix, utc: req.utc});  
+    }    
 });
-
 
 
 // listen for requests :)
