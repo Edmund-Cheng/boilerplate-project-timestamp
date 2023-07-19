@@ -54,7 +54,7 @@ function validateDate(input) {
 app.get("/api/:dateOrTimestamp", function (req, res, next) {
   if (validateTimestamp(req.params.dateOrTimestamp)) {
     req.unix = parseInt(req.params.dateOrTimestamp);
-    req.utc = new Date(req.unix).toUTCString;
+    req.utc = new Date(req.unix).toUTCString();
     req.invalidDate = false;
   } else if (validateDate(req.params.dateOrTimestamp)) {
     var newDate = new Date(req.params.dateOrTimestamp);
@@ -62,8 +62,16 @@ app.get("/api/:dateOrTimestamp", function (req, res, next) {
     req.utc = newDate.toUTCString();
     req.invalidDate = false;
   } else {
-    req.invalidDate = true;
+    var date = new Date(req.params.dateOrTimestamp);
+    if (isNaN(date)) {
+      req.invalidDate = true;
+    } else {
+      req.unix = date.getTime();
+      req.utc = newDate.toUTCString();
+      req.invalidDate = false;
+    }
   };
+  console.log(req.params.dateOrTimestamp);
   next();
 }, function(req, res) {
     if (req.invalidDate) {
